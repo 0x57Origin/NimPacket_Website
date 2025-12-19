@@ -1,0 +1,425 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>NimPacket - Low-Level Packet Manipulation for Nim</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;700&display=swap');
+
+        body {
+            font-family: 'JetBrains Mono', monospace;
+        }
+
+        .terminal-box {
+            background: #1a1a1a;
+            border: 2px solid #333;
+            box-shadow: 0 0 0 1px #000;
+        }
+
+        .code-block {
+            background: #0d1117;
+            border-left: 3px solid #f39c12;
+        }
+
+        .feature-card {
+            border: 1px solid #333;
+            transition: all 0.2s;
+        }
+
+        .feature-card:hover {
+            border-color: #f39c12;
+            transform: translateY(-2px);
+        }
+
+        .btn-primary {
+            background: #f39c12;
+            transition: all 0.2s;
+        }
+
+        .btn-primary:hover {
+            background: #e67e22;
+            transform: translateY(-1px);
+        }
+
+        .comparison-table td, .comparison-table th {
+            border: 1px solid #333;
+        }
+
+        .check { color: #2ecc71; }
+        .cross { color: #e74c3c; }
+    </style>
+</head>
+<body class="bg-gray-900 text-gray-100">
+
+    <!-- Header -->
+    <header class="border-b border-gray-800 bg-black">
+        <nav class="container mx-auto px-4 py-4">
+            <div class="flex items-center justify-between">
+                <div class="text-2xl font-bold">
+                    <span class="text-yellow-500">&gt;_</span> NimPacket
+                </div>
+                <div class="hidden md:flex space-x-6 text-sm">
+                    <a href="#features" class="hover:text-yellow-500 transition">Features</a>
+                    <a href="#comparison" class="hover:text-yellow-500 transition">vs Scapy</a>
+                    <a href="#quickstart" class="hover:text-yellow-500 transition">Quick Start</a>
+                    <a href="#docs" class="hover:text-yellow-500 transition">Docs</a>
+                </div>
+                <a href="https://github.com/0x57Origin/NimPacket" target="_blank" class="btn-primary px-4 py-2 text-sm font-medium text-black hover:text-black">
+                    GitHub &rarr;
+                </a>
+            </div>
+        </nav>
+    </header>
+
+    <!-- Hero Section -->
+    <section class="container mx-auto px-4 py-20 md:py-32">
+        <div class="max-w-4xl mx-auto text-center">
+            <h1 class="text-4xl md:text-6xl font-bold mb-6">
+                Low-Level Packet<br>
+                <span class="text-yellow-500">Manipulation</span> for Nim
+            </h1>
+            <p class="text-lg md:text-xl text-gray-400 mb-8 max-w-2xl mx-auto">
+                Direct byte-level control over network packets. Built for security research,
+                penetration testing, and custom network tools.
+            </p>
+            <div class="flex flex-col sm:flex-row gap-4 justify-center">
+                <a href="https://github.com/0x57Origin/NimPacket" target="_blank" class="btn-primary px-8 py-3 font-medium text-black inline-block">
+                    View on GitHub
+                </a>
+                <a href="#quickstart" class="border border-gray-700 px-8 py-3 font-medium hover:border-yellow-500 transition inline-block">
+                    Get Started
+                </a>
+            </div>
+        </div>
+    </section>
+
+    <!-- Code Demo -->
+    <section class="container mx-auto px-4 py-16">
+        <div class="max-w-4xl mx-auto">
+            <div class="terminal-box p-6 rounded-lg">
+                <div class="flex items-center gap-2 mb-4 pb-3 border-b border-gray-800">
+                    <div class="w-3 h-3 rounded-full bg-red-500"></div>
+                    <div class="w-3 h-3 rounded-full bg-yellow-500"></div>
+                    <div class="w-3 h-3 rounded-full bg-green-500"></div>
+                    <span class="ml-2 text-xs text-gray-500">packet_craft.nim</span>
+                </div>
+                <pre class="text-sm overflow-x-auto"><code><span class="text-purple-400">import</span> nimpacket
+
+<span class="text-gray-500"># Create a TCP SYN packet</span>
+<span class="text-purple-400">let</span> <span class="text-blue-400">ipv4</span> = <span class="text-yellow-400">IPv4Header</span>(
+  srcIP: <span class="text-yellow-400">parseIPv4</span>(<span class="text-green-400">"192.168.1.100"</span>),
+  dstIP: <span class="text-yellow-400">parseIPv4</span>(<span class="text-green-400">"10.0.0.1"</span>),
+  protocol: <span class="text-yellow-500">IPPROTO_TCP</span>
+)
+
+<span class="text-purple-400">let</span> <span class="text-blue-400">tcp</span> = <span class="text-yellow-400">TCPHeader</span>(
+  srcPort: <span class="text-yellow-500">12345</span>,
+  dstPort: <span class="text-yellow-500">80</span>,
+  flags: <span class="text-yellow-500">TCP_SYN</span>
+)
+
+<span class="text-gray-500"># Stack layers and serialize</span>
+<span class="text-purple-400">let</span> <span class="text-blue-400">packet</span> = (ipv4 / tcp).<span class="text-yellow-400">toBytes</span>()
+<span class="text-purple-400">echo</span> <span class="text-green-400">"Packet ready: "</span>, packet.<span class="text-yellow-400">len</span>, <span class="text-green-400">" bytes"</span></code></pre>
+            </div>
+        </div>
+    </section>
+
+    <!-- Features -->
+    <section id="features" class="container mx-auto px-4 py-20">
+        <div class="max-w-6xl mx-auto">
+            <h2 class="text-3xl md:text-4xl font-bold mb-12 text-center">
+                <span class="text-yellow-500">//</span> Core Features
+            </h2>
+            <div class="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
+
+                <div class="feature-card bg-gray-800 p-6 rounded-lg">
+                    <div class="text-yellow-500 text-2xl mb-3">[ 01 ]</div>
+                    <h3 class="text-xl font-bold mb-2">Full Protocol Support</h3>
+                    <p class="text-gray-400 text-sm">
+                        Ethernet, ARP, IPv4, TCP, UDP, ICMP. Complete control over every header field.
+                    </p>
+                </div>
+
+                <div class="feature-card bg-gray-800 p-6 rounded-lg">
+                    <div class="text-yellow-500 text-2xl mb-3">[ 02 ]</div>
+                    <h3 class="text-xl font-bold mb-2">Layer Stacking</h3>
+                    <p class="text-gray-400 text-sm">
+                        Intuitive / operator to combine layers. Build complex packets with clean syntax.
+                    </p>
+                </div>
+
+                <div class="feature-card bg-gray-800 p-6 rounded-lg">
+                    <div class="text-yellow-500 text-2xl mb-3">[ 03 ]</div>
+                    <h3 class="text-xl font-bold mb-2">Zero Dependencies</h3>
+                    <p class="text-gray-400 text-sm">
+                        Pure Nim implementation. No external libraries required. Easy to audit and deploy.
+                    </p>
+                </div>
+
+                <div class="feature-card bg-gray-800 p-6 rounded-lg">
+                    <div class="text-yellow-500 text-2xl mb-3">[ 04 ]</div>
+                    <h3 class="text-xl font-bold mb-2">Native Performance</h3>
+                    <p class="text-gray-400 text-sm">
+                        Compiles to machine code. Optimized checksums. Minimal memory allocations.
+                    </p>
+                </div>
+
+                <div class="feature-card bg-gray-800 p-6 rounded-lg">
+                    <div class="text-yellow-500 text-2xl mb-3">[ 05 ]</div>
+                    <h3 class="text-xl font-bold mb-2">Type Safety</h3>
+                    <p class="text-gray-400 text-sm">
+                        Compile-time checks prevent common errors. Structured types over raw byte arrays.
+                    </p>
+                </div>
+
+                <div class="feature-card bg-gray-800 p-6 rounded-lg">
+                    <div class="text-yellow-500 text-2xl mb-3">[ 06 ]</div>
+                    <h3 class="text-xl font-bold mb-2">Bidirectional</h3>
+                    <p class="text-gray-400 text-sm">
+                        Craft packets from scratch or parse raw bytes. Full serialization support.
+                    </p>
+                </div>
+
+                <div class="feature-card bg-gray-800 p-6 rounded-lg">
+                    <div class="text-yellow-500 text-2xl mb-3">[ 07 ]</div>
+                    <h3 class="text-xl font-bold mb-2">IP Fragmentation</h3>
+                    <p class="text-gray-400 text-sm">
+                        5 advanced evasion strategies: TinyFragments, OverlapPoison, OutOfOrder, TimeDelayed, PolymorphicRandom.
+                    </p>
+                </div>
+
+            </div>
+        </div>
+    </section>
+
+    <!-- Comparison with Scapy -->
+    <section id="comparison" class="container mx-auto px-4 py-20 bg-black bg-opacity-50">
+        <div class="max-w-6xl mx-auto">
+            <h2 class="text-3xl md:text-4xl font-bold mb-12 text-center">
+                <span class="text-yellow-500">//</span> NimPacket vs Scapy
+            </h2>
+
+            <div class="overflow-x-auto">
+                <table class="comparison-table w-full text-sm">
+                    <thead>
+                        <tr class="bg-gray-800">
+                            <th class="p-4 text-left font-bold">Feature</th>
+                            <th class="p-4 text-center font-bold text-yellow-500">NimPacket</th>
+                            <th class="p-4 text-center font-bold">Scapy</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr class="bg-gray-900">
+                            <td class="p-4 font-medium">Performance</td>
+                            <td class="p-4 text-center check font-bold">Native (Fast)</td>
+                            <td class="p-4 text-center text-gray-400">Interpreted (Slow)</td>
+                        </tr>
+                        <tr class="bg-gray-800">
+                            <td class="p-4 font-medium">Dependencies</td>
+                            <td class="p-4 text-center check font-bold">Zero</td>
+                            <td class="p-4 text-center text-gray-400">Many (Python ecosystem)</td>
+                        </tr>
+                        <tr class="bg-gray-900">
+                            <td class="p-4 font-medium">Type Safety</td>
+                            <td class="p-4 text-center check font-bold">Strong (Compile-time)</td>
+                            <td class="p-4 text-center text-gray-400">Weak (Runtime)</td>
+                        </tr>
+                        <tr class="bg-gray-800">
+                            <td class="p-4 font-medium">Binary Size</td>
+                            <td class="p-4 text-center check font-bold">Small (~KB)</td>
+                            <td class="p-4 text-center text-gray-400">Large (Python + libs)</td>
+                        </tr>
+                        <tr class="bg-gray-900">
+                            <td class="p-4 font-medium">Learning Curve</td>
+                            <td class="p-4 text-center check font-bold">Low</td>
+                            <td class="p-4 text-center check font-bold">Low</td>
+                        </tr>
+                        <tr class="bg-gray-800">
+                            <td class="p-4 font-medium">Protocol Coverage</td>
+                            <td class="p-4 text-center text-gray-400">Core protocols</td>
+                            <td class="p-4 text-center check font-bold">Extensive</td>
+                        </tr>
+                        <tr class="bg-gray-900">
+                            <td class="p-4 font-medium">Packet Capture</td>
+                            <td class="p-4 text-center text-gray-400">Manual (raw sockets)</td>
+                            <td class="p-4 text-center check font-bold">Built-in</td>
+                        </tr>
+                        <tr class="bg-gray-800">
+                            <td class="p-4 font-medium">Security Auditing</td>
+                            <td class="p-4 text-center check font-bold">Easy (673 lines)</td>
+                            <td class="p-4 text-center text-gray-400">Complex (large codebase)</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+
+            <div class="mt-12 grid md:grid-cols-2 gap-8">
+                <div class="code-block p-6 rounded-lg">
+                    <h3 class="text-yellow-500 font-bold mb-3">Use NimPacket When:</h3>
+                    <ul class="space-y-2 text-sm text-gray-300">
+                        <li><span class="text-yellow-500">+</span> Performance matters</li>
+                        <li><span class="text-yellow-500">+</span> You need type safety</li>
+                        <li><span class="text-yellow-500">+</span> Building security tools in Nim</li>
+                        <li><span class="text-yellow-500">+</span> Want minimal dependencies</li>
+                        <li><span class="text-yellow-500">+</span> Core protocols are sufficient</li>
+                        <li><span class="text-yellow-500">+</span> Need to audit the code</li>
+                    </ul>
+                </div>
+
+                <div class="code-block p-6 rounded-lg">
+                    <h3 class="text-yellow-500 font-bold mb-3">Use Scapy When:</h3>
+                    <ul class="space-y-2 text-sm text-gray-300">
+                        <li><span class="text-yellow-500">+</span> Need extensive protocol support</li>
+                        <li><span class="text-yellow-500">+</span> Require packet capture features</li>
+                        <li><span class="text-yellow-500">+</span> Interactive exploration needed</li>
+                        <li><span class="text-yellow-500">+</span> Python ecosystem is required</li>
+                        <li><span class="text-yellow-500">+</span> Prototyping and testing</li>
+                        <li><span class="text-yellow-500">+</span> Performance is not critical</li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Quick Start -->
+    <section id="quickstart" class="container mx-auto px-4 py-20">
+        <div class="max-w-4xl mx-auto">
+            <h2 class="text-3xl md:text-4xl font-bold mb-12 text-center">
+                <span class="text-yellow-500">//</span> Quick Start
+            </h2>
+
+            <div class="space-y-6">
+                <div>
+                    <h3 class="text-xl font-bold mb-3 text-yellow-500">[ Installation ]</h3>
+                    <div class="terminal-box p-4 rounded-lg">
+                        <code class="text-sm">$ nimble install nimpacket</code>
+                    </div>
+                </div>
+
+                <div>
+                    <h3 class="text-xl font-bold mb-3 text-yellow-500">[ Basic Usage ]</h3>
+                    <div class="code-block p-4 rounded-lg overflow-x-auto">
+                        <pre class="text-sm"><code><span class="text-purple-400">import</span> nimpacket
+
+<span class="text-gray-500"># Create IPv4 header</span>
+<span class="text-purple-400">let</span> ip = <span class="text-yellow-400">IPv4Header</span>(
+  srcIP: <span class="text-yellow-400">parseIPv4</span>(<span class="text-green-400">"192.168.1.1"</span>),
+  dstIP: <span class="text-yellow-400">parseIPv4</span>(<span class="text-green-400">"8.8.8.8"</span>),
+  protocol: <span class="text-yellow-500">IPPROTO_UDP</span>
+)
+
+<span class="text-gray-500"># Create UDP header</span>
+<span class="text-purple-400">let</span> udp = <span class="text-yellow-400">UDPHeader</span>(
+  srcPort: <span class="text-yellow-500">5353</span>,
+  dstPort: <span class="text-yellow-500">53</span>
+)
+
+<span class="text-gray-500"># Stack and serialize</span>
+<span class="text-purple-400">let</span> packet = (ip / udp).<span class="text-yellow-400">toBytes</span>()</code></pre>
+                    </div>
+                </div>
+
+                <div>
+                    <h3 class="text-xl font-bold mb-3 text-yellow-500">[ Parse Packets ]</h3>
+                    <div class="code-block p-4 rounded-lg overflow-x-auto">
+                        <pre class="text-sm"><code><span class="text-purple-400">let</span> parsed = <span class="text-yellow-400">parsePacket</span>(rawBytes)
+<span class="text-purple-400">if</span> parsed.ipv4Header.<span class="text-yellow-400">isSome</span>:
+  <span class="text-purple-400">echo</span> <span class="text-green-400">"Source: "</span>, parsed.ipv4Header.<span class="text-yellow-400">get</span>.srcIP
+<span class="text-purple-400">if</span> parsed.tcpHeader.<span class="text-yellow-400">isSome</span>:
+  <span class="text-purple-400">echo</span> <span class="text-green-400">"Port: "</span>, parsed.tcpHeader.<span class="text-yellow-400">get</span>.dstPort</code></pre>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Use Cases -->
+    <section class="container mx-auto px-4 py-20 bg-black bg-opacity-50">
+        <div class="max-w-6xl mx-auto">
+            <h2 class="text-3xl md:text-4xl font-bold mb-12 text-center">
+                <span class="text-yellow-500">//</span> Use Cases
+            </h2>
+            <div class="grid md:grid-cols-2 gap-6">
+
+                <div class="bg-gray-800 p-6 rounded-lg border border-gray-700">
+                    <h3 class="text-lg font-bold mb-3 text-yellow-500">Port Scanning</h3>
+                    <p class="text-sm text-gray-400">
+                        Craft custom TCP SYN packets for fast port discovery. Build stealth scanners with precise control over packet fields.
+                    </p>
+                </div>
+
+                <div class="bg-gray-800 p-6 rounded-lg border border-gray-700">
+                    <h3 class="text-lg font-bold mb-3 text-yellow-500">Network Discovery</h3>
+                    <p class="text-sm text-gray-400">
+                        Send ARP requests to map network topology. Identify active hosts and their MAC addresses.
+                    </p>
+                </div>
+
+                <div class="bg-gray-800 p-6 rounded-lg border border-gray-700">
+                    <h3 class="text-lg font-bold mb-3 text-yellow-500">Protocol Testing</h3>
+                    <p class="text-sm text-gray-400">
+                        Test network applications by sending malformed or edge-case packets. Validate protocol implementations.
+                    </p>
+                </div>
+
+                <div class="bg-gray-800 p-6 rounded-lg border border-gray-700">
+                    <h3 class="text-lg font-bold mb-3 text-yellow-500">Security Research</h3>
+                    <p class="text-sm text-gray-400">
+                        Analyze packet structures, test firewall rules, and develop custom network security tools.
+                    </p>
+                </div>
+
+                <div class="bg-gray-800 p-6 rounded-lg border border-gray-700">
+                    <h3 class="text-lg font-bold mb-3 text-yellow-500">IDS/IPS Evasion</h3>
+                    <p class="text-sm text-gray-400">
+                        Test detection systems with IP fragmentation techniques. Evaluate security controls with advanced evasion strategies.
+                    </p>
+                </div>
+
+            </div>
+        </div>
+    </section>
+
+    <!-- Documentation -->
+    <section id="docs" class="container mx-auto px-4 py-20">
+        <div class="max-w-4xl mx-auto text-center">
+            <h2 class="text-3xl md:text-4xl font-bold mb-6">
+                <span class="text-yellow-500">//</span> Documentation
+            </h2>
+            <p class="text-gray-400 mb-8 max-w-2xl mx-auto">
+                Comprehensive guides, API reference, and examples available on GitHub.
+                Includes working demos for common network tools.
+            </p>
+            <a href="https://github.com/0x57Origin/NimPacket" target="_blank" class="btn-primary px-8 py-3 font-medium text-black inline-block">
+                Read Full Documentation &rarr;
+            </a>
+        </div>
+    </section>
+
+    <!-- Footer -->
+    <footer class="border-t border-gray-800 bg-black mt-20">
+        <div class="container mx-auto px-4 py-8">
+            <div class="flex flex-col md:flex-row justify-between items-center gap-4 text-sm text-gray-500">
+                <div>
+                    NimPacket v0.1.0 - MIT License
+                </div>
+                <div class="flex gap-6">
+                    <a href="https://github.com/0x57Origin/NimPacket" target="_blank" class="hover:text-yellow-500 transition">
+                        GitHub
+                    </a>
+                    <a href="https://github.com/0x57Origin/NimPacket/issues" target="_blank" class="hover:text-yellow-500 transition">
+                        Issues
+                    </a>
+                    <a href="https://github.com/0x57Origin/NimPacket#readme" target="_blank" class="hover:text-yellow-500 transition">
+                        README
+                    </a>
+                </div>
+            </div>
+        </div>
+    </footer>
+
+</body>
+</html>
